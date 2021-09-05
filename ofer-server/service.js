@@ -14,11 +14,13 @@ const GetEmployeeList = async () => {
 const GetEmployeeroles = async (employeeId) => {
   const query = `SELECT employees_roles.roleId, roles.description \
     FROM employees_roles     INNER JOIN roles ON roles.Id = employees_roles.roleId \
-    WHERE employees_roles.employeeId=${employeeId} AND employees_roles.enabled=true ;`;
+    WHERE employees_roles.employeeId=? AND employees_roles.enabled=true ;`;
 
-  const [results, fields] = await connection.execute(query).catch((err) => {
-    throw err;
-  });
+  const [results, fields] = await connection
+    .execute(query, [employeeId])
+    .catch((err) => {
+      throw err;
+    });
   return results;
 };
 
@@ -27,10 +29,12 @@ const GetEmployeeroles = async (employeeId) => {
 const ClockIn = async (employeeId, roleId) => {
   // const actionTime = Date.toISO();
   const query = `INSERT INTO employees_roles  (employeeId, roleId, enabled) \
-  VALUES (${employeeId}, ${roleId},false); `;
-  const [results, fields] = await connection.execute(query).catch((err) => {
-    throw err;
-  });
+  VALUES (?,?,false); `;
+  const [results, fields] = await connection
+    .execute(query, [employeeId, roleId])
+    .catch((err) => {
+      throw err;
+    });
   return results;
 };
 
